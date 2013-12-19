@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the datacleaner_contact feature.
+ */
+
+include_once 'datacleaner_contact.features.inc';

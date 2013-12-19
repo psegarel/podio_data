@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the datacleaner_views feature.
+ */
+
+include_once 'datacleaner_views.features.inc';
