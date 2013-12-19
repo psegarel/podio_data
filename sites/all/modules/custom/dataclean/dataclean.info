@@ -1,0 +1,4 @@
+name = Data Cleaner
+description = Implements PHPExcel Library in order to import data from Excel files
+package = Data Cleaner
+core = 7.x
