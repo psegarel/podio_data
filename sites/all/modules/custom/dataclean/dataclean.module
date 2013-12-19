@@ -1,1 +1,267 @@
 <?php
+
+function dataclean_preprocess_page(&$variables)
+{	
+	dataclean_import_stuff();
+}
+
+
+function dataclean_import_stuff() 
+{
+  module_load_include('inc', 'phpexcel');
+  
+  // The path to the excel file
+  $path = 'sites/default/files/excel/Dongguan.xlsx';
+  
+	/** The phpexcel_import() function can take two optional parameters.
+	The second defaults to TRUE. If TRUE, the first row (headers) will be ignored and each row's cells will be keyed with the header value. If FALSE, the entire data array will be non-associative, and the first row (headers) will be present as well.
+ 
+	The third defaults to FALSE. If TRUE, the first level of the data keys will be the Worksheet names. If FALSE, the keys will be numerical. 
+	*/  
+  $result = phpexcel_import($path , FALSE , TRUE );
+
+  if($result['Database']){
+	  
+	  $database = $result['Database'];
+	  // Removes the first row
+	  unset($database[0]);
+	  
+	  // Removes the headers
+	  unset($database[1]);
+	  
+	  $records = array();
+	  
+	  foreach($database as $row)
+	  {
+	  		  $record = new stdClass();
+	  		  $record->field_business_name['und'][0]['value'] = $row[0]; //business name
+	  		  $record->field_db_contact['und'][0]['value'] = _dataclean_get_db_contact($row[1]); // db friend
+			  
+			  // English name
+			  _dataclean_get_contact_name($record, $row[3]);// english name
+			   		 
+	  		  $record->field_job['und'][0]['value'] = $row[5]; // job
+	  		  $record->field_city['und'][0]['value'] = $row[10]; // city
+	  		  
+			  //Sales & Distribution
+			  _dataclean_get_sd($record , $row[2]);
+	  		  
+	  		  $record->field_chinese_name['und'][0]['value'] = $row[4]; // chinese name
+			  
+			  // Email
+			  _dataclean_get_email($record, $row[6]);
+			  
+	  		  $record->field_mobile_phone['und'][0]['value'] = $row[7]; // mobile
+	  		  $record->field_landline['und'][0]['value'] = $row[8]; // phone
+	  		  $record->field_website['und'][0]['value'] = $row[9]; // website
+	  		  $record->field_district['und'][0]['value'] = $row[11]; // district
+	  		  $record->field_address['und'][0]['value'] = $row[12]; // english address
+	  		  $record->field_chinese_address['und'][0]['value'] = $row[13]; // chinese address
+	  		  
+	  		  $record->type = 'contact';
+	  		  
+			  // Don't add empty rows to the records
+			  if(isset($record->title)){
+  	 		  	$records[] = $record;
+			  }
+	  }
+	  
+	  //variable_del('dongguan_db_nids');
+	  $nids = variable_get('dongguan_db_nids');
+      //dsm($nids);
+	  
+	  if(empty($nids)){
+		
+		// Record the saved nodes IDs
+		$saved = array();
+		
+		foreach($records as $node){			
+	  		node_object_prepare($node);
+			node_save($node);	
+			
+			if(isset($node->nid))		
+				$saved[] = $node->nid;			
+		} 
+		
+		// Records the saved nodes ids in a variable
+		variable_set('dongguan_db_nids', $saved );
+	  }
+  }
+}
+
+function _dataclean_get_email($record, $value)
+{
+	// Remove all hyperlinks, mailto etc...
+	$search = array('@HYPERLINK@', '@mailto:@', '@"@', '@=@', '/\(|\)/');
+	$value = preg_replace($search, '', $value);
+	
+	// Cleans QQ contacts, tramsform them to email & store the QQ contact value
+	$isQQ = _dataclean_qqToEmail($record, $value);
+
+	// If it wasn't a QQ contact
+	if(!$isQQ){
+		if($value){
+			// More than one email?
+			$pos = strpos( $value, '/');
+			if($pos){
+				$emails = explode('/' , $value);
+			}
+			$pos = strpos( $value, ',');
+			if($pos){
+				$emails = explode(',' , $value);
+			}
+			
+			if(isset($emails)){
+				
+				// We need to clean up because we've created duplicate when removing the hyperlinks
+				$clean = array();
+				foreach($emails as $id=>$text){
+					$isEmail = strpos($text , '@');
+					if($isEmail){
+						$email = strtolower(trim($text));
+						if(!in_array($email, $clean )){
+							$clean[] = $email;
+						}
+					}
+				}
+				
+				foreach($clean as $e){
+					$record->field_email['und'][] = array('value' => $e);
+				}
+				
+			}else{
+				$email = strtolower(trim($value));
+			}
+		}		
+	}
+}
+
+function _dataclean_qqToEmail($record, $value)
+{
+	$qq = strpos($value, 'qq');
+	if($qq === 0){ //if qq is at the beginning of the text, then it's not an email address
+		$value = preg_replace('/[^0-9]/' , '', $value);
+		$email = $value.'@qq.com';
+		
+		$record->field_email['und'][0]['value'] = $email;
+		$record->field_qq['und'][0]['value'] = $value;
+		
+	}else{
+		return FALSE;
+	}
+}
+
+function _dataclean_get_sd($record , $tag)
+{
+  switch($tag) // Sales & Distribution
+  {
+  	  case 'D':
+	  	$record->field_sales['und'][0]['value'] = 0;
+	  	$record->field_distribution['und'][0]['value'] = 1;
+	  	break;
+		
+  	  case 'S':
+	  	$record->field_sales['und'][0]['value'] = 0;
+	  	$record->field_distribution['und'][0]['value'] = 1;
+	  	break;
+  	  				
+  	  case 'SD':
+	  	$record->field_sales['und'][0]['value'] = 1;
+	  	$record->field_distribution['und'][0]['value'] = 1;
+	  	break;
+  	  				
+  	  default:
+	  	$record->field_sales['und'][0]['value'] = 0;
+	  	$record->field_distribution['und'][0]['value'] = 0;
+  }
+}
+
+function _dataclean_get_contact_name($record , $name)
+{
+	// Is there a Mr or Ms
+	$pos = strpos($name, 'Mr'); //It's a guy
+	if($pos === 0){
+		$record->field_gender['und'][0]['value'] = 'Male';
+		$search = array('@Mr@', '@\.@');
+		$name = trim(preg_replace($search, '', $name));
+		$space = strpos($name, ' ');
+		
+		if($space){
+			$names = explode(' ', $name);  
+			$record->field_last_name['und'][0]['value'] = array_pop($names);
+  			$record->field_first_name['und'][0]['value'] = implode(' ', $names);
+			$record->title = $record->field_first_name['und'][0]['value'].' '.$record->field_last_name['und'][0]['value'];	
+		}else{
+			$record->field_last_name['und'][0]['value'] = $name;
+			$record->title = 'Mr '.$name;
+		}
+		
+	}else{
+		
+		$pos = strpos($name, 'Ms'); //It's a girl
+		if($pos === 0){
+			$record->field_gender['und'][0]['value'] = 'Female';
+			$search = array('@Ms@', '@\.@');
+			$name = trim(preg_replace($search, '', $name));
+			$space = strpos($name, ' ');
+		
+			if($space){
+				$names = explode(' ', $name);  
+				$record->field_last_name['und'][0]['value'] = array_pop($names);
+	  			$record->field_first_name['und'][0]['value'] = implode(' ', $names);
+				$record->title = $record->field_first_name['und'][0]['value'].' '.$record->field_last_name['und'][0]['value'];	
+			}else{
+				$record->field_last_name['und'][0]['value'] = $name;
+				$record->title = 'Ms '.$name;
+			}
+		}else{
+			if($name){
+				$name = trim($name);
+				$space = strpos($name , ' ');
+				
+				if($space){
+					$names = explode(' ', $name);
+					$record->field_last_name['und'][0]['value'] = array_pop($names);
+	  				$record->field_first_name['und'][0]['value'] = implode(' ', $names);
+					$record->title = $record->field_first_name['und'][0]['value'].' '.$record->field_last_name['und'][0]['value'];
+				}else{
+					$record->title = $record->field_first_name['und'][0]['value'] = $name;
+				}
+				
+			}else{
+				if($record->field_business_name['und'][0]['value']){
+					$record->title = $record->field_business_name['und'][0]['value'];
+				}
+			}
+		}			
+	}
+}
+
+function _dataclean_get_db_contact($name)
+{
+	switch($name)
+	{
+		case 'E':
+			$name = 'Edison';
+			break;
+
+		case 'E+T':
+		case 'T+E':
+			$name = 'Edison';
+			break;
+			
+		case 'JO':
+			$name = 'Joanna';
+			break;			
+			
+		case 'T':
+			$name = 'Tracy';
+			break;
+			
+		case 'V':
+			$name = 'Virginia';
+			break;
+	}
+	
+	return $name;
+}
