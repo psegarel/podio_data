@@ -41,6 +41,7 @@ function dataclean_preprocess_page(&$variables)
 function _dataclean_save_records($records , $arguments , $update )
 {	
 	$nodes = variable_get($arguments['db_name']);
+	dsm($nodes);
 	
 	if($update || empty($nodes) ){
 		if(!empty($nodes) ){
