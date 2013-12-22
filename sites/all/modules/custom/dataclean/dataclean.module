@@ -20,7 +20,7 @@ function dataclean_preprocess_page(&$variables)
 					'city'				=> 'Dongguan',
 					'excel_file_path'	=> 'sites/default/files/excel/Dongguan.xlsx',
 					'contact_types' 	=> $contact_types,
-					'update'			=> TRUE ) ;
+					'update'			=> FALSE ) ;
 					
 	$args['db_name'] = 	strtolower($args['city']).'_db';	
 	$city_databases[] = $args;
@@ -41,6 +41,7 @@ function dataclean_preprocess_page(&$variables)
 function _dataclean_save_records($records , $arguments , $update )
 {	
 	$nodes = variable_get($arguments['db_name']);
+	dsm($nodes);
 	
 	if($update){
 		if(!empty($nodes) ){
@@ -72,7 +73,6 @@ function _dataclean_save_records($records , $arguments , $update )
 		} 	
 		// Records the saved nodes ids in a variable
 		if(!empty($saved)){
-			dsm($saved);
 			variable_set($arguments['db_name'], $saved ); 
 		}		
 	}
