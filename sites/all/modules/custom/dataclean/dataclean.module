@@ -40,7 +40,6 @@ function dataclean_preprocess_page(&$variables)
 
 function _dataclean_save_records($records , $arguments , $update )
 {	
-	variable_del($arguments['db_name']);
 	$nodes = variable_get($arguments['db_name']);
 	
 	if($update || empty($nodes) ){
