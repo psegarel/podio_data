@@ -40,9 +40,10 @@ function dataclean_preprocess_page(&$variables)
 
 function _dataclean_save_records($records , $arguments , $update )
 {	
+	variable_del($arguments['db_name']);
 	$nodes = variable_get($arguments['db_name']);
 	
-	if($update){
+	if($update || empty($nodes) ){
 		if(!empty($nodes) ){
 
 			drupal_set_message('Let\'s update those nodes then!' , 'status');
