@@ -1,7 +1,8 @@
 <?php
 
 function dataclean_preprocess_page(&$variables)
-{		
+{	
+	variable_del('contact_types');	
 	$contact_types = variable_get('contact_types');
 
 	if(!$contact_types){
