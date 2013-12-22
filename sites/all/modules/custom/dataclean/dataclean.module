@@ -2,14 +2,12 @@
 
 function dataclean_preprocess_page(&$variables)
 {	
-	variable_del('contact_types');	
 	$contact_types = variable_get('contact_types');
 
 	if(!$contact_types){
 		$contact_types = _dataclean_get_vocabulary_terms('contact_type');
 		variable_set('contact_types' , $contact_types );
 	}
-	dsm($contact_types);
 	
 	/**
 	* Imports the City databases
@@ -40,10 +38,10 @@ function dataclean_preprocess_page(&$variables)
 	}
 }
 
-function _dataclean_save_records($records , $arguments , $update = FALSE )
+function _dataclean_save_records($records , $arguments , $update )
 {	
 	$nodes = variable_get($arguments['db_name']);
-	dsm($nodes);
+	dsm($update);
 	
 	if($update){
 		if(!empty($nodes) ){
