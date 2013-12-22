@@ -20,7 +20,7 @@ function dataclean_preprocess_page(&$variables)
 					'city'				=> 'Dongguan',
 					'excel_file_path'	=> 'sites/default/files/excel/Dongguan.xlsx',
 					'contact_types' 	=> $contact_types,
-					'update'			=> FALSE) ;
+					'update'			=> FALSE ) ;
 					
 	$args['db_name'] = 	strtolower($args['city']).'_db';	
 	$city_databases[] = $args;
@@ -30,6 +30,8 @@ function dataclean_preprocess_page(&$variables)
 	foreach($city_databases as $city){
 		
 		$records = dataclean_import_excel_data($city);
+		
+		dsm($records);
 			
 		// Save all records
 		if($records){
