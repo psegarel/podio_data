@@ -1,17 +1,92 @@
 <?php
 
 function dataclean_preprocess_page(&$variables)
+{		
+	$contact_types = variable_get('contact_types');
+
+	if(!$contact_types){
+		$contact_types = _dataclean_get_vocabulary_terms('contact_type');
+		variable_set('contact_types' , $contact_types );
+	}
+	
+	/**
+	* Imports the City databases
+	* --------------------------
+	*/
+	$city_databases = array();
+		
+	// Dongguan
+	$args = array( 	'type' 				=> 'city',
+					'city'				=> 'Dongguan',
+					'excel_file_path'	=> 'sites/default/files/excel/Dongguan.xlsx',
+					'contact_types' 	=> $contact_types ),
+					'update'			=> FALSE;
+					
+	$args['db_name'] = 	strtolower($args['city']).'_db';	
+	$city_databases[] = $args;
+		
+	
+    // Imports the records into Drupal
+	foreach($city_databases as $city){
+		
+		$records = dataclean_import_excel_data($city);
+			
+		// Save all records
+		if($records){
+			_dataclean_save_records($records , $city , $city['update'] );
+		}
+	}
+}
+
+function _dataclean_save_records($records , $arguments , $update = FALSE )
 {	
-	dataclean_import_stuff();
+	$nodes = variable_get($arguments['db_name']);
+
+	if($update){
+		if(!empty($nodes) ){
+
+			drupal_set_message('Let\'s update those nodes then!' , 'status');
+		
+			foreach($nodes as $node){
+				if(isset($node)){
+			  	  	node_delete($node->nid); 
+				}
+			} 
+			drupal_set_message('Nodes already exist', 'status');	  
+			// Easier to erase the previous records, then save again...
+			variable_del($arguments['db_name']);
+			
+		}
+
+		drupal_set_message('Nodes don\'t exist yet', 'status');
+		// Record the saved nodes
+		$saved = array();
+
+		foreach($records as $node){			
+			node_object_prepare($node);
+			node_save($node);	
+
+			if(isset($node->nid)){
+				$saved[] = $node;
+			}					
+		} 	
+		// Records the saved nodes ids in a variable
+		if(!empty($saved)){
+			variable_set($arguments['db_name'], $saved ); 
+		}		
+	}
 }
 
 
-function dataclean_import_stuff() 
+function dataclean_import_excel_data($arguments) 
 {
   module_load_include('inc', 'phpexcel');
   
   // The path to the excel file
-  $path = 'sites/default/files/excel/Dongguan.xlsx';
+  $path = $arguments['excel_file_path'];
+  
+  // The types of Contacts
+  $contact_types = $arguments['contact_types'];
   
 	/** The phpexcel_import() function can take two optional parameters.
 	The second defaults to TRUE. If TRUE, the first row (headers) will be ignored and each row's cells will be keyed with the header value. If FALSE, the entire data array will be non-associative, and the first row (headers) will be present as well.
@@ -30,7 +105,7 @@ function dataclean_import_stuff()
 	  unset($database[1]);
 	  
 	  $records = array();
-	  
+
 	  foreach($database as $row)
 	  {
 	  		  $record = new stdClass();
@@ -38,7 +113,9 @@ function dataclean_import_stuff()
 	  		  $record->field_db_contact['und'][0]['value'] = _dataclean_get_db_contact($row[1]); // db friend
 			  
 			  // English name
-			  _dataclean_get_contact_name($record, $row[3]);// english name
+			  // Also assigns a Contact type term, depending on the English name
+			  // If there is a business name but no English name, we assume it's a company
+			  _dataclean_get_contact_name($record, $row[3] , $contact_types );// english name
 			   		 
 	  		  $record->field_job['und'][0]['value'] = $row[5]; // job
 	  		  $record->field_city['und'][0]['value'] = $row[10]; // city
@@ -66,26 +143,11 @@ function dataclean_import_stuff()
 			  }
 	  }
 	  
-	  //variable_del('dongguan_db_nids');
-	  $nids = variable_get('dongguan_db_nids');
-      //dsm($nids);
-	  
-	  if(empty($nids)){
-		
-		// Record the saved nodes IDs
-		$saved = array();
-		
-		foreach($records as $node){			
-	  		node_object_prepare($node);
-			node_save($node);	
-			
-			if(isset($node->nid))		
-				$saved[] = $node->nid;			
-		} 
-		
-		// Records the saved nodes ids in a variable
-		variable_set('dongguan_db_nids', $saved );
+	  if(!empty($records)){
+		  return $records;		  
 	  }
+  }else{
+	drupal_set_message('The database couldn\'t not be imported', 'error');
   }
 }
 
@@ -176,17 +238,19 @@ function _dataclean_get_sd($record , $tag)
   }
 }
 
-function _dataclean_get_contact_name($record , $name)
-{
+function _dataclean_get_contact_name($record , $name , $contact_types )
+{	
 	// Is there a Mr or Ms
 	$pos = strpos($name, 'Mr'); //It's a guy
 	if($pos === 0){
 		$record->field_gender['und'][0]['value'] = 'Male';
+		$record->field_contact_type['und'][0]['tid'] = $contact_types['Individual'];
+		
 		$search = array('@Mr@', '@\.@');
 		$name = trim(preg_replace($search, '', $name));
 		$space = strpos($name, ' ');
 		
-		if($space){
+		if($space){ //Is there a space in the name, is there a first name...
 			$names = explode(' ', $name);  
 			$record->field_last_name['und'][0]['value'] = array_pop($names);
   			$record->field_first_name['und'][0]['value'] = implode(' ', $names);
@@ -201,6 +265,8 @@ function _dataclean_get_contact_name($record , $name)
 		$pos = strpos($name, 'Ms'); //It's a girl
 		if($pos === 0){
 			$record->field_gender['und'][0]['value'] = 'Female';
+			$record->field_contact_type['und'][0]['tid'] = $contact_types['Individual'];
+			
 			$search = array('@Ms@', '@\.@');
 			$name = trim(preg_replace($search, '', $name));
 			$space = strpos($name, ' ');
@@ -219,18 +285,24 @@ function _dataclean_get_contact_name($record , $name)
 				$name = trim($name);
 				$space = strpos($name , ' ');
 				
-				if($space){
+				if($space){ //Is there a space in the name, is there a first name...
 					$names = explode(' ', $name);
 					$record->field_last_name['und'][0]['value'] = array_pop($names);
 	  				$record->field_first_name['und'][0]['value'] = implode(' ', $names);
 					$record->title = $record->field_first_name['und'][0]['value'].' '.$record->field_last_name['und'][0]['value'];
+					
 				}else{
 					$record->title = $record->field_first_name['und'][0]['value'] = $name;
 				}
 				
-			}else{
-				if($record->field_business_name['und'][0]['value']){
+				$record->field_contact_type['und'][0]['tid'] = $contact_types['Individual'];
+				
+			}else{ // If there's no individual name
+				if($record->field_business_name['und'][0]['value']){ // but there is a Business Name
 					$record->title = $record->field_business_name['und'][0]['value'];
+					
+					// I assume it's a business
+					$record->field_contact_type['und'][0]['tid'] = $contact_types['Business'];
 				}
 			}
 		}			
@@ -264,4 +336,29 @@ function _dataclean_get_db_contact($name)
 	}
 	
 	return $name;
+}
+
+function _dataclean_get_vocabulary_terms($vocabulary_name)
+{
+	$vocabulary = taxonomy_vocabulary_machine_name_load($vocabulary_name);
+	
+	if($vocabulary){
+		$tree = taxonomy_get_tree($vocabulary->vid);
+		
+		if($tree){
+			$terms = array();
+		
+			foreach($tree as $term)
+			{
+				$terms[$term->name] = $term->tid;
+			}
+		}
+		
+		return $terms;
+		
+	}else{
+		
+		drupal_set_message('The '.$vocabulary_name.' vocabulary couldn\'t be found', 'error');
+		return FALSE;
+	}
 }
