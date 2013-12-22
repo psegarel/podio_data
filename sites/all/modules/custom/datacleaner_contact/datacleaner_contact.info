@@ -13,6 +13,7 @@ features[field_instance][] = node-contact-field_business_name
 features[field_instance][] = node-contact-field_chinese_address
 features[field_instance][] = node-contact-field_chinese_name
 features[field_instance][] = node-contact-field_city
+features[field_instance][] = node-contact-field_contact_type
 features[field_instance][] = node-contact-field_db_contact
 features[field_instance][] = node-contact-field_distribution
 features[field_instance][] = node-contact-field_district

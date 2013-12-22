@@ -46,7 +46,7 @@ function datacleaner_contact_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 14,
+      'weight' => 18,
     ),
   );
 
@@ -86,7 +86,7 @@ function datacleaner_contact_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => -3,
+      'weight' => 1,
     ),
   );
 
@@ -126,7 +126,7 @@ function datacleaner_contact_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 15,
+      'weight' => 19,
     ),
   );
 
@@ -166,7 +166,7 @@ function datacleaner_contact_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 6,
+      'weight' => 10,
     ),
   );
 
@@ -206,7 +206,44 @@ function datacleaner_contact_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 0,
+      'weight' => 4,
+    ),
+  );
+
+  // Exported field_instance: 'node-contact-field_contact_type'
+  $field_instances['node-contact-field_contact_type'] = array(
+    'bundle' => 'contact',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'inline',
+        'module' => 'taxonomy',
+        'settings' => array(),
+        'type' => 'taxonomy_term_reference_link',
+        'weight' => 20,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_contact_type',
+    'label' => 'Contact Type',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(),
+      'type' => 'options_buttons',
+      'weight' => 2,
     ),
   );
 
@@ -246,7 +283,7 @@ function datacleaner_contact_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 1,
+      'weight' => 5,
     ),
   );
 
@@ -283,7 +320,7 @@ function datacleaner_contact_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 4,
+      'weight' => 8,
     ),
   );
 
@@ -323,7 +360,7 @@ function datacleaner_contact_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 13,
+      'weight' => 17,
     ),
   );
 
@@ -363,7 +400,7 @@ function datacleaner_contact_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 7,
+      'weight' => 11,
     ),
   );
 
@@ -403,7 +440,7 @@ function datacleaner_contact_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 2,
+      'weight' => 6,
     ),
   );
 
@@ -440,7 +477,7 @@ function datacleaner_contact_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 9,
+      'weight' => 13,
     ),
   );
 
@@ -480,7 +517,7 @@ function datacleaner_contact_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => -1,
+      'weight' => 3,
     ),
   );
 
@@ -520,7 +557,7 @@ function datacleaner_contact_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 11,
+      'weight' => 15,
     ),
   );
 
@@ -560,7 +597,7 @@ function datacleaner_contact_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 3,
+      'weight' => 7,
     ),
   );
 
@@ -600,7 +637,7 @@ function datacleaner_contact_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 10,
+      'weight' => 14,
     ),
   );
 
@@ -640,7 +677,7 @@ function datacleaner_contact_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 8,
+      'weight' => 12,
     ),
   );
 
@@ -677,7 +714,7 @@ function datacleaner_contact_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 5,
+      'weight' => 9,
     ),
   );
 
@@ -717,7 +754,7 @@ function datacleaner_contact_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 12,
+      'weight' => 16,
     ),
   );
 
@@ -728,6 +765,7 @@ function datacleaner_contact_field_default_field_instances() {
   t('Chinese Address');
   t('Chinese Name');
   t('City');
+  t('Contact Type');
   t('DB Contact');
   t('Distribution');
   t('District');
