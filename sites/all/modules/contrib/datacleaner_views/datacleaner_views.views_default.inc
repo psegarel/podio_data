@@ -281,26 +281,6 @@ function datacleaner_views_views_default_views() {
   $handler->display->display_options['filters']['type']['value'] = array(
     'contact' => 'contact',
   );
-  /* Filter criterion: Content: Contact Type (field_contact_type) */
-  $handler->display->display_options['filters']['field_contact_type_tid']['id'] = 'field_contact_type_tid';
-  $handler->display->display_options['filters']['field_contact_type_tid']['table'] = 'field_data_field_contact_type';
-  $handler->display->display_options['filters']['field_contact_type_tid']['field'] = 'field_contact_type_tid';
-  $handler->display->display_options['filters']['field_contact_type_tid']['value'] = array(
-    1 => '1',
-    2 => '2',
-  );
-  $handler->display->display_options['filters']['field_contact_type_tid']['exposed'] = TRUE;
-  $handler->display->display_options['filters']['field_contact_type_tid']['expose']['operator_id'] = 'field_contact_type_tid_op';
-  $handler->display->display_options['filters']['field_contact_type_tid']['expose']['label'] = 'Contact Type';
-  $handler->display->display_options['filters']['field_contact_type_tid']['expose']['operator'] = 'field_contact_type_tid_op';
-  $handler->display->display_options['filters']['field_contact_type_tid']['expose']['identifier'] = 'field_contact_type_tid';
-  $handler->display->display_options['filters']['field_contact_type_tid']['expose']['remember_roles'] = array(
-    2 => '2',
-    1 => 0,
-    3 => 0,
-  );
-  $handler->display->display_options['filters']['field_contact_type_tid']['type'] = 'select';
-  $handler->display->display_options['filters']['field_contact_type_tid']['vocabulary'] = 'contact_type';
 
   /* Display: Page */
   $handler = $view->new_display('page', 'Page', 'page');

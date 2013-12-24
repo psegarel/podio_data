@@ -34,7 +34,7 @@ function dataclean_preprocess_page(&$variables)
 			
 		// Save all records
 		if($records){
-			_dataclean_save_records($records , $city , $city['update'] );
+			//_dataclean_save_records($records , $city , $city['update'] );
 		}
 	}
 }
