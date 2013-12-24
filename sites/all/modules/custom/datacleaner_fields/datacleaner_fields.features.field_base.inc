@@ -184,6 +184,35 @@ function datacleaner_fields_field_default_field_bases() {
     'type' => 'text',
   );
 
+  // Exported field_base: 'field_chinese_province'
+  $field_bases['field_chinese_province'] = array(
+    'active' => 1,
+    'cardinality' => 1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_chinese_province',
+    'foreign keys' => array(
+      'format' => array(
+        'columns' => array(
+          'format' => 'format',
+        ),
+        'table' => 'filter_format',
+      ),
+    ),
+    'indexes' => array(
+      'format' => array(
+        0 => 'format',
+      ),
+    ),
+    'locked' => 0,
+    'module' => 'text',
+    'settings' => array(
+      'max_length' => 255,
+    ),
+    'translatable' => 0,
+    'type' => 'text',
+  );
+
   // Exported field_base: 'field_city'
   $field_bases['field_city'] = array(
     'active' => 1,
@@ -245,6 +274,31 @@ function datacleaner_fields_field_default_field_bases() {
     ),
     'translatable' => 0,
     'type' => 'taxonomy_term_reference',
+  );
+
+  // Exported field_base: 'field_country'
+  $field_bases['field_country'] = array(
+    'active' => 1,
+    'cardinality' => 1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_country',
+    'foreign keys' => array(),
+    'indexes' => array(
+      'iso2' => array(
+        0 => 'iso2',
+      ),
+    ),
+    'locked' => 0,
+    'module' => 'countries',
+    'settings' => array(
+      'continents' => array(),
+      'countries' => array(),
+      'enabled' => 1,
+      'size' => 5,
+    ),
+    'translatable' => 0,
+    'type' => 'country',
   );
 
   // Exported field_base: 'field_data_type'
@@ -361,6 +415,35 @@ function datacleaner_fields_field_default_field_bases() {
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_email',
+    'foreign keys' => array(
+      'format' => array(
+        'columns' => array(
+          'format' => 'format',
+        ),
+        'table' => 'filter_format',
+      ),
+    ),
+    'indexes' => array(
+      'format' => array(
+        0 => 'format',
+      ),
+    ),
+    'locked' => 0,
+    'module' => 'text',
+    'settings' => array(
+      'max_length' => 255,
+    ),
+    'translatable' => 0,
+    'type' => 'text',
+  );
+
+  // Exported field_base: 'field_email_2'
+  $field_bases['field_email_2'] = array(
+    'active' => 1,
+    'cardinality' => 1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_email_2',
     'foreign keys' => array(
       'format' => array(
         'columns' => array(
@@ -562,6 +645,35 @@ function datacleaner_fields_field_default_field_bases() {
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_mobile_phone',
+    'foreign keys' => array(
+      'format' => array(
+        'columns' => array(
+          'format' => 'format',
+        ),
+        'table' => 'filter_format',
+      ),
+    ),
+    'indexes' => array(
+      'format' => array(
+        0 => 'format',
+      ),
+    ),
+    'locked' => 0,
+    'module' => 'text',
+    'settings' => array(
+      'max_length' => 255,
+    ),
+    'translatable' => 0,
+    'type' => 'text',
+  );
+
+  // Exported field_base: 'field_mobile_phone_2'
+  $field_bases['field_mobile_phone_2'] = array(
+    'active' => 1,
+    'cardinality' => 1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_mobile_phone_2',
     'foreign keys' => array(
       'format' => array(
         'columns' => array(
