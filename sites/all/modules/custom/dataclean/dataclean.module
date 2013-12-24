@@ -3,6 +3,7 @@
 function dataclean_preprocess_page(&$variables)
 {	
 	$contact_types = variable_get('contact_types');
+	$data_types = variable_get('data_types');
 
 	if(!$contact_types){
 		$contact_types = _dataclean_get_vocabulary_terms('contact_type');
@@ -314,25 +315,51 @@ function _dataclean_get_db_contact($name)
 	switch($name)
 	{
 		case 'E':
-			$name = 'Edison';
+			$name = 'Edison Zhang';
 			break;
 
 		case 'E+T':
 		case 'T+E':
-			$name = 'Edison';
+			$name = 'Edison Zhang';
+			break;		
+			
+		case 'E+V':
+			$name = 'Edison Zhang';
+			break;	
+			
+		case 'F':
+			$name = 'Frances Chen';
+			break;
+			
+		case 'JJ':
+		case 'JJ+T':
+			$name = 'JJ Verdun';
 			break;
 			
 		case 'JO':
-			$name = 'Joanna';
-			break;			
+			$name = 'Joanna Huo';
+			break;	
+			
+		case 'Kelley':
+		case 'K':
+			$name = 'Kelley Chan';
+			break;		
 			
 		case 'T':
-			$name = 'Tracy';
+			$name = 'Tracy Leung';
+			break;	
+			
+		case 'Tess':
+			$name = 'Tess Boller';
 			break;
 			
 		case 'V':
-			$name = 'Virginia';
+		case 'Virginia':
+		case 'V+JJ':
+		case 'JJ+V':		
+			$name = 'Virginia Liu';
 			break;
+			
 	}
 	
 	return $name;
